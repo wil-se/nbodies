@@ -38,3 +38,5 @@ void generate_empty_children(bnode* node);
 bnode* get_octant(bnode* node, double x, double y, double z);
 void update(bnode* node, int body, double x, double y, double z, double mass);
 void insert_body(bnode* node, int body);
+void compute_forces(bnode* node, int body, double theta);
+void compute_forces_all(bnode* root, double theta);

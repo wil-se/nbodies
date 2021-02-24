@@ -3,6 +3,9 @@
 #include "lib-host.h"
 #include <math.h>
 
+#define G 6.67e-11
+#define dt 10
+
 int n;
 double *x, *y, *z, *mass, *sx, *sy, *sz;
 
@@ -144,7 +147,6 @@ void build_barnes_tree(bnode* root){
         generate_empty_children(root);
 
         for(int i=0; i<n; i++){
-                //printf("first call body: %d x: %lf y: %lf z: %lf\n", i, x[i], y[i], z[i]);
 		insert_body(root, i);
         }
 }
@@ -311,7 +313,6 @@ void update(bnode* node, int body, double x, double y, double z, double mass){
 
 void insert_body(bnode* node, int body){
 	double bx = x[body], by = y[body], bz = z[body], bmass=mass[body];
-	//printf("insert body: %d x: %lf y: %lf z: %lf\n", body, bx, by, bz);
 	if(node->body == -1){
 		update(node, body, bx, by, bz, bmass);
 		return;
@@ -334,5 +335,70 @@ void insert_body(bnode* node, int body){
 	}
 
 }
+
+void compute_forces(bnode* node, int body, double theta){
+	double bx = x[body], by = y[body], bz = z[body], bmass = mass[body];
+	double part_force[3];
+	double force[3];
+	double ratio;
+	double distance;
+	double cubic_distance;
+	double mass_product;
+	force[0] = 0;
+	force[1] = 0;
+	force[2] = 0;
+	
+	if(node->body == body || node->body == -1){return;}
+
+	ratio = fabs(node->max_x - node->min_x);
+	part_force[0] = bx - node->x;
+	part_force[1] = by - node->y;
+	part_force[2] = bz - node->z;
+	distance = sqrt(pow(part_force[0],2) + pow(part_force[1],2) + pow(part_force[2],2));
+	
+	print_node(node);
+	printf("ratio: %lf", ratio);
+	printf("ratio/distance: %lf\n", ratio/distance);	
+	if(ratio/distance < theta || node->body >= 0){
+		printf("updating %d\n", body);
+		cubic_distance = pow(distance, 3);
+		mass_product = node->mass*bmass;
+			
+		part_force[0] *= -G*mass_product/cubic_distance;
+		part_force[1] *= -G*mass_product/cubic_distance;
+		part_force[2] *= -G*mass_product/cubic_distance;
+			
+		force[0] += part_force[0];
+		force[1] += part_force[1];
+		force[2] += part_force[2];
+
+		x[body] += sx[body]*dt + (force[0]/bmass)*dt*dt*0.5;
+		y[body] += sy[body]*dt + (force[1]/bmass)*dt*dt*0.5;
+		z[body] += sz[body]*dt + (force[2]/bmass)*dt*dt*0.5;
+		
+		sx[body] += (force[0]/bmass)*dt;
+		sy[body] += (force[1]/bmass)*dt;
+		sz[body] += (force[2]/bmass)*dt;	
+	} else {
+		compute_forces(node->o0, body, theta);
+		compute_forces(node->o1, body, theta);
+		compute_forces(node->o2, body, theta);
+		compute_forces(node->o3, body, theta);
+		compute_forces(node->o4, body, theta);
+		compute_forces(node->o5, body, theta);	
+		compute_forces(node->o6, body, theta);
+		compute_forces(node->o7, body, theta);
+	}
+}
+
+void compute_forces_all(bnode* root, double theta){
+	for(int i=0; i<n; i++){
+		compute_forces(root, i, theta);
+	}
+}
+
+
+
+
 
 
