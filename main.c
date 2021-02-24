@@ -4,7 +4,7 @@
 #include "lib-host-barnes.h"
 
 
-int iters = 100;
+int iters = 10;
 
 int main(){
 	printf("START =================================================\n");
