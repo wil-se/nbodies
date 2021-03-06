@@ -7,7 +7,6 @@
 #define G 6.67e-11
 #define dt 10
 
-
 queue* create_queue(int max_size){
         queue* q;
         q = (queue*)malloc(sizeof(queue));
@@ -84,11 +83,11 @@ void print_tree(bnode* node){
 }
 
 void print_node(bnode* node){
-        printf("================================\nBODY: %d\nDEPTH: %d\nMAX X: %ld\nMAX Y: %ld\nMAX Z: %ld\nMIN X: %ld\nMIN Y: %ld\nMIN Z: %ld\nX: %lf\nY: %lf\nZ: %lf\nMASS: %lf\n", node->body, node->depth, node->max_x, node->max_y, node->max_z, node->min_x, node->min_y, node->min_z, node->x, node->y, node->z, node->mass);
+        printf("================================\nBODY: %d\nDEPTH: %d\nMAX X: %ld\nMAX Y: %ld\nMAX Z: %ld\nMIN X: %ld\nMIN Y: %ld\nMIN Z: %ld\nX: %Lf\nY: %Lf\nZ: %Lf\nMASS: %Lf\n", node->body, node->depth, node->max_x, node->max_y, node->max_z, node->min_x, node->min_y, node->min_z, node->x, node->y, node->z, node->mass);
 }
 
 long int get_bound(){
-	double max = 0;
+	long double max = 0;
         for(int i=0; i<n; i++){
 		if(fabs(x[i]) > max){max = fabs(x[i]);}
                 if(fabs(y[i]) > max){max = fabs(y[i]);}
@@ -262,7 +261,7 @@ void generate_empty_children(bnode *node){
         node->o7 = o7;
 }
 
-bnode* get_octant(bnode* node, double x, double y, double z){
+bnode* get_octant(bnode* node, long double x, long double y, long double z){
 
 	long int scalar = fabs(node->max_x - node->min_x)/2;
 
@@ -294,17 +293,17 @@ bnode* get_octant(bnode* node, double x, double y, double z){
         return result;
 }
 
-void update(bnode* node, int body, double x, double y, double z, double mass){
+void update(bnode* node, int body, long double x, long double y, long double z, long double mass){
 	if(node->body >= 0){
                 node->body = -2;
         }
         if(node->body == -1){
                 node->body = body;
         }
-        double tmass = node->mass + mass;
-        double tx = ((node->mass*node->x)+(mass*x))/tmass;
-	double ty = ((node->mass*node->y)+(mass*y))/tmass;
-        double tz = ((node->mass*node->z)+(mass*z))/tmass;
+        long double tmass = node->mass + mass;
+        long double tx = ((node->mass*node->x)+(mass*x))/tmass;
+	long double ty = ((node->mass*node->y)+(mass*y))/tmass;
+        long double tz = ((node->mass*node->z)+(mass*z))/tmass;
         node->mass = tmass;
         node->x = tx;
         node->y = ty;
@@ -313,7 +312,7 @@ void update(bnode* node, int body, double x, double y, double z, double mass){
 }
 
 void insert_body(bnode* node, int body){
-	double bx = x[body], by = y[body], bz = z[body], bmass=mass[body];
+	long double bx = x[body], by = y[body], bz = z[body], bmass=mass[body];
 	if(node->body == -1){
 		update(node, body, bx, by, bz, bmass);
 		return;
@@ -337,61 +336,67 @@ void insert_body(bnode* node, int body){
 
 }
 
-void compute_forces(bnode* node, int body, double theta){
-	double bx = x[body], by = y[body], bz = z[body], bmass = mass[body];
-	double part_force[3];
-	double force[3];
-	double ratio;
-	double distance;
-	double cubic_distance;
-	double mass_product;
-	force[0] = 0;
-	force[1] = 0;
-	force[2] = 0;
-	
+void compute_barnes_forces(bnode* node, int body, double theta){
 	if(node->body == body || node->body == -1){return;}
-
-	ratio = fabs(node->max_x - node->min_x);
-	part_force[0] = bx - node->x;
-	part_force[1] = by - node->y;
-	part_force[2] = bz - node->z;
-	distance = sqrt(pow(part_force[0],2) + pow(part_force[1],2) + pow(part_force[2],2));
-	
-	if(ratio/distance < theta || node->body >= 0){
-		cubic_distance = pow(distance, 3);
-		mass_product = node->mass*bmass;
-			
-		part_force[0] *= -G*mass_product/cubic_distance;
-		part_force[1] *= -G*mass_product/cubic_distance;
-		part_force[2] *= -G*mass_product/cubic_distance;
-			
-		force[0] += part_force[0];
-		force[1] += part_force[1];
-		force[2] += part_force[2];
-
-		x[body] += sx[body]*dt + (force[0]/bmass)*dt*dt*0.5;
-		y[body] += sy[body]*dt + (force[1]/bmass)*dt*dt*0.5;
-		z[body] += sz[body]*dt + (force[2]/bmass)*dt*dt*0.5;
+	long double ratio = fabs(node->max_x - node->min_x);;
+	long double line_distance = sqrt(pow(x[body] - node->x,2) + pow(y[body] - node->y,2) + pow(z[body] - node->z,2));;
 		
-		sx[body] += (force[0]/bmass)*dt;
-		sy[body] += (force[1]/bmass)*dt;
-		sz[body] += (force[2]/bmass)*dt;	
+	if(ratio/line_distance < theta || node->body >= 0){
+		long double acc[3] = {0, 0, 0};
+		long double force[3] = {0, 0, 0};
+		long double distance[3] = {x[body] - node->x, y[body] - node->y, z[body] - node->z};
+		long double unit_vector[3] = {distance[0]/fabs(distance[0]), distance[1]/fabs(distance[1]), distance[2]/fabs(distance[2])};
+		
+		force[0] = -G*((node->mass*mass[body]/pow(distance[0], 2)))*unit_vector[0];
+		force[1] = -G*((node->mass*mass[body]/pow(distance[1], 2)))*unit_vector[1];
+		force[2] = -G*((node->mass*mass[body]/pow(distance[2], 2)))*unit_vector[2];
+
+		acc[0] = force[0]/mass[body];
+		acc[1] = force[1]/mass[body];
+		acc[2] = force[2]/mass[body];
+
+		new_x[body] += sx[body]*dt + (acc[0])*dt*dt*0.5;
+		new_y[body] += sy[body]*dt + (acc[1])*dt*dt*0.5;
+		new_z[body] += sz[body]*dt + (acc[2])*dt*dt*0.5;
+
+		long double new_acc[3] = {0, 0, 0};
+		long double new_force[3] = {0, 0, 0};
+		long double new_distance[3] = {new_x[body] - node->x, new_y[body] - node->y, new_z[body] - node->z};
+		long double new_unit_vector[3] = {new_distance[0]/fabs(new_distance[0]), new_distance[1]/fabs(new_distance[1]), new_distance[2]/fabs(new_distance[2])};
+
+		new_force[0] = -G*((node->mass*mass[body]/pow(new_distance[0], 2)))*new_unit_vector[0];
+		new_force[1] = -G*((node->mass*mass[body]/pow(new_distance[1], 2)))*new_unit_vector[1];
+		new_force[2] = -G*((node->mass*mass[body]/pow(new_distance[2], 2)))*new_unit_vector[2];
+
+		new_acc[0] = new_force[0]/mass[body];
+		new_acc[1] = new_force[1]/mass[body];
+		new_acc[2] = new_force[2]/mass[body];
+
+		new_sx[body] += 0.5*(acc[0] + new_acc[0])*dt;
+		new_sy[body] += 0.5*(acc[1] + new_acc[1])*dt;
+		new_sz[body] += 0.5*(acc[2] + new_acc[2])*dt;
+
+		
 	} else {
-		compute_forces(node->o0, body, theta);
-		compute_forces(node->o1, body, theta);
-		compute_forces(node->o2, body, theta);
-		compute_forces(node->o3, body, theta);
-		compute_forces(node->o4, body, theta);
-		compute_forces(node->o5, body, theta);	
-		compute_forces(node->o6, body, theta);
-		compute_forces(node->o7, body, theta);
+		compute_barnes_forces(node->o0, body, theta);
+		compute_barnes_forces(node->o1, body, theta);
+		compute_barnes_forces(node->o2, body, theta);
+		compute_barnes_forces(node->o3, body, theta);
+		compute_barnes_forces(node->o4, body, theta);
+		compute_barnes_forces(node->o5, body, theta);	
+		compute_barnes_forces(node->o6, body, theta);
+		compute_barnes_forces(node->o7, body, theta);
 	}
 }
 
-void compute_forces_all(bnode* root, double theta){
+void compute_barnes_forces_all(bnode* root, double theta){
+	set_new_memory();
+	set_new_vectors();
 	for(int i=0; i<n; i++){
-		compute_forces(root, i, theta);
+		compute_barnes_forces(root, i, theta);
 	}
+	set_vectors();
+	free_new_memory();
 }
 
 
