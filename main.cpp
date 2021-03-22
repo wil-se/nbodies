@@ -20,22 +20,6 @@ float deltaAngle = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
 
-// In the GLUT library someone put the polar regions on the z-axis - yech!!
-// We fixed it so that they are on the y-axis.  We do this by rotating -90
-// degrees about the x-axis which brings (0,0,1) to (0,1,0).
-void myWireSphere(GLfloat radius, int slices, int stacks) {
-  glPushMatrix();
-  glRotatef(90, 1.0, 0.0, 0.0);
-  glutWireSphere(radius, slices, stacks);
-  glPopMatrix();
-}
-
-// In our solar system simulation we keep track of the current "year" and
-// current "day" in global variables.  Actually we just make the planet go
-// around the sun in increments of 5 degrees (the "year") and rotate the
-// planet on its own axis in increments of 10 degrees (the "day").
-static int year = 0, day = 0;
-
 // As usual, the routine to display the current state of the system is
 // bracketed with a clearing of the window and a glFlush call.  Immediately
 // within those calls the drawing code itself is bracketed by pushing and
@@ -48,45 +32,21 @@ void display() {
 
   // Draw sun: a yellow sphere of radius 1 centered at the origin.
   glColor3f(1.0, 1.0, 0.0);
-  myWireSphere(2.0, 16, 16);
+  // myWireSphere(2.0, 16, 16);
+  glutWireSphere(2.0, 16, 16);
 
   glTranslatef (1.0, 1.0, 1.0);
   glColor3f(5.0, 13.0, 43.0);
-  myWireSphere(1.8, 16.0, 16.0);
-
-
-
-  // Draw planet: a blue sphere of radius 0.2, 2 units away from sun, with
-  // a white "pole" for its axis.
-  //glRotatef((GLfloat)year, 0.0, 1.0, 0.0);
-  //glTranslatef (2.0, 0.0, 0.0);
-  //glRotatef((GLfloat)day, 0.0, 1.0, 0.0);
-  //glColor3f(0.0, 0.0, 1.0);
-  //myWireSphere(0.5, 16, 16);
-  //glColor3f(1, 1, 1);
-  /*glBegin(GL_LINES);
-  #  glVertex3f(0, -0.3, 0);
-  #  glVertex3f(0, 0.3, 0);
-  glEnd();*/
+  // myWireSphere(1.8, 16.0, 16.0);
+  glutWireSphere(2.0, 16.0, 16.0);
 
   glPopMatrix();
   glFlush();
   glutSwapBuffers();
 }
 
-// Viewing routines.  Basically the camera is sitting on a comet orbiting
-// the sun with a "year" 8 times that of the planet.  To animate we have
-// the function nextAnimationFrame() registered as the idle function.  It
-// increments the value of u (to "move" the camera), ticks off another
-// portion of a day and portion of a year, then reorients the camera and
-// refreshes the display.
-static GLfloat u = 0.0;                 // curve parameter for comet pos
-static GLfloat du = 0.1;                // amt to increment u each frame
 
 void timer(int v) {
-  u += du;
-  day = (day + 1) % 360;
-  year = (year + 2) % 360;
   glLoadIdentity();
   gluLookAt(x,y, z, x+lx,y+ly,z+lz, 0.0f,1.0f,0.0f);
   glutPostRedisplay();
@@ -162,8 +122,8 @@ void mouseMove(int x, int y) {
   }
   if (yOrigin >= 0) {
     deltaAngle = (y - yOrigin) * 0.005f;
-    lz = sin(angle - deltaAngle);
-    ly = -cos(angle - deltaAngle);
+    //lz = sin(angle - deltaAngle);
+    ly = -sin(angle - deltaAngle);
   }
 }
 
