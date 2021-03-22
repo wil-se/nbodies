@@ -1,24 +1,15 @@
-#INC = -I/opt/cuda/include 
-#SM_ARCH ?= compute_35
-#SM_CODE ?= sm_35
-#ARCH = -gencode arch=$(SM_ARCH),code=$(SM_CODE)
 CFLAGS = -lm -lglut -lGL -lGLU
-CC = gcc
-OBJECTS = main.o
+CC = g++
 
 .PHONY: clean nbody test
 
-%.o: %.cpp
-	$(CC) $< -o $@ $(CFLAGS) 
 
 clean:
-	rm $(OBJECTS) a.out
+	rm $(OBJECTS) a.out main.o
 
-nbody: $(OBJECTS)
-	#$(CC) main.cpp $(OBJECTS) $(CFLAGS) $(INC) -o main.o
-	$(CC) main.cpp $(OBJECTS) $(CFLAGS)
+nbody: main.cpp
+	$(CC) common.cpp render.cpp main.cpp -o main.o $(CFLAGS)
 
 run: nbody
 	./main.o
-
 

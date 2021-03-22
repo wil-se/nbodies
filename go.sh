@@ -2,5 +2,5 @@
 
 FILES="main.cpp"
 
-while [[ 1 ]]; do inotifywait -qe modify $FILES; eval "make run < input" ; done
+while [[ 1 ]]; do make run < input; done
 
