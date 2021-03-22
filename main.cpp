@@ -11,13 +11,14 @@
 #include <cmath>
 
 // angle of rotation for the camera direction
-float angle=0.0;
+float angle=0.0f;
 // actual vector representing the camera's direction
-float lx=0.0f,lz=-1.0f;
+float lx=-0.0f,lz=-1.0f, ly=0.0f;
 // XZ position of the camera
-float x=0.0f,z=5.0f;
-
-
+float x=0.0f,z=5.0f,y=0.0f;
+float deltaAngle = 0.0f;
+int xOrigin = -1;
+int yOrigin = -1;
 
 // In the GLUT library someone put the polar regions on the z-axis - yech!!
 // We fixed it so that they are on the y-axis.  We do this by rotating -90
@@ -47,16 +48,22 @@ void display() {
 
   // Draw sun: a yellow sphere of radius 1 centered at the origin.
   glColor3f(1.0, 1.0, 0.0);
-  myWireSphere(1.0, 16, 16);
+  myWireSphere(2.0, 16, 16);
+
+  glTranslatef (1.0, 1.0, 1.0);
+  glColor3f(5.0, 13.0, 43.0);
+  myWireSphere(1.8, 16.0, 16.0);
+
+
 
   // Draw planet: a blue sphere of radius 0.2, 2 units away from sun, with
   // a white "pole" for its axis.
-  glRotatef((GLfloat)year, 0.0, 1.0, 0.0);
-  glTranslatef (2.0, 0.0, 0.0);
-  glRotatef((GLfloat)day, 0.0, 1.0, 0.0);
-  glColor3f(0.0, 0.0, 1.0);
-  myWireSphere(0.5, 16, 16);
-  glColor3f(1, 1, 1);
+  //glRotatef((GLfloat)year, 0.0, 1.0, 0.0);
+  //glTranslatef (2.0, 0.0, 0.0);
+  //glRotatef((GLfloat)day, 0.0, 1.0, 0.0);
+  //glColor3f(0.0, 0.0, 1.0);
+  //myWireSphere(0.5, 16, 16);
+  //glColor3f(1, 1, 1);
   /*glBegin(GL_LINES);
   #  glVertex3f(0, -0.3, 0);
   #  glVertex3f(0, 0.3, 0);
@@ -81,7 +88,7 @@ void timer(int v) {
   day = (day + 1) % 360;
   year = (year + 2) % 360;
   glLoadIdentity();
-  gluLookAt(x,1.0f, z, x+lx,1.0f,z+lz, 0.0f,1.0f,0.0f);
+  gluLookAt(x,y, z, x+lx,y+ly,z+lz, 0.0f,1.0f,0.0f);
   glutPostRedisplay();
   glutTimerFunc(1000/60, timer, v);
 }
@@ -129,6 +136,37 @@ void processSpecialKeys(int key, int xx, int yy) {
 	}
 }
 
+void mouseButton(int button, int state, int x, int y) {
+
+  // only start motion if the left button is pressed
+  if (button == GLUT_LEFT_BUTTON) {
+
+    // when the button is released
+    if (state == GLUT_UP) {
+      angle -= deltaAngle;
+      xOrigin = -1;
+      yOrigin = -1;
+    }
+    else {// state = GLUT_DOWN
+      xOrigin = x;
+      yOrigin = y;
+    }
+  }
+}
+
+void mouseMove(int x, int y) {
+  if (xOrigin >= 0) {
+    deltaAngle = (x - xOrigin) * 0.005f;
+    lx = sin(angle - deltaAngle);
+    lz = -cos(angle - deltaAngle);
+  }
+  if (yOrigin >= 0) {
+    deltaAngle = (y - yOrigin) * 0.005f;
+    lz = sin(angle - deltaAngle);
+    ly = -cos(angle - deltaAngle);
+  }
+}
+
 // The usual main() for a GLUT application.
 int main(int argc, char** argv) {
   glutInit(&argc, argv);
@@ -139,6 +177,10 @@ int main(int argc, char** argv) {
   glutReshapeFunc(reshape);
  //glutKeyboardFunc(processNormalKeys);
 	glutSpecialFunc(processSpecialKeys);
+  // here are the two new functions
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
+
   glutTimerFunc(100, timer, 0);
   glEnable(GL_DEPTH_TEST);
   glutMainLoop();
