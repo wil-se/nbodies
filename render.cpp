@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "common.h"
+#include "sequential-exhaustive.h"
 #include "render.h"
 
 #ifdef __APPLE_CC__

@@ -10,5 +10,3 @@ void set_new_memory();
 void free_new_memory();
 void set_new_vectors();
 void set_vectors();
-void compute_ex_force(int body2, int body1);
-void compute_ex_forces();

@@ -8,7 +8,7 @@ clean:
 	rm $(OBJECTS) a.out main.o
 
 nbody: main.cpp
-	$(CC) common.cpp render.cpp main.cpp -o main.o $(CFLAGS)
+	$(CC) common.cpp render.cpp sequential-exhaustive.cpp main.cpp -o main.o $(CFLAGS)
 
 run: nbody
 	./main.o
