@@ -6,3 +6,4 @@ void mouseButton(int button, int state, int xcam, int ycam);
 void mouseMove(int xcam, int ycam);
 void reshape(GLint w, GLint h);
 void timer(int v);
+void init_opengl(int argc, char** argv);

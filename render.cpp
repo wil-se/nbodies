@@ -29,7 +29,8 @@ int yOrigin = -1;
 // current matrix mode is GL_MODELVIEW.  We finish with a SwapBuffers call
 // because we'll animate.
 void display() {
-		compute_ex_forces();
+		
+    //compute_ex_forces();
 		print_csv_bodies();
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -44,7 +45,6 @@ void display() {
 	  }
 	  
    glTranslatef (x[i], y[i], z[i]);
-    //glColor3f(5.0, 13.0, 43.0);
     glutWireSphere(2.0, 16.0, 16.0);
   }
 
@@ -145,4 +145,19 @@ void mouseMove(int xcam, int ycam) {
     //lz = sin(angle - deltaAngle);
     lycam = -sin(angle - deltaAngle);
   }
+}
+
+void init_opengl(int argc, char** argv) {
+  glutInit(&argc, argv);
+  glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+  glutInitWindowSize(1000, 1000);
+  glutCreateWindow("space");
+  glutDisplayFunc(display);
+  glutReshapeFunc(reshape);
+	glutSpecialFunc(processSpecialKeys);
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
+  glutTimerFunc(100, timer, 0);
+  glEnable(GL_DEPTH_TEST);
+  glutMainLoop();
 }
