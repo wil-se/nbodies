@@ -12,15 +12,13 @@ OBJECTS = main.o
 	$(CC) $< -o $@ $(CFLAGS) 
 
 clean:
-	rm $(OBJECTS) nbody
+	rm $(OBJECTS) a.out
 
 nbody: $(OBJECTS)
-	#$(CC) main.cpp $(OBJECTS) $(CFLAGS) $(INC) -o nbody
+	#$(CC) main.cpp $(OBJECTS) $(CFLAGS) $(INC) -o main.o
 	$(CC) main.cpp $(OBJECTS) $(CFLAGS)
 
 run: nbody
 	./main.o
-	rm main.o
-	rm a.out
 
 
