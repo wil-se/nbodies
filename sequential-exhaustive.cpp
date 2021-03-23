@@ -4,7 +4,7 @@
 #include <cassert>
 #include "common.h"
 #define G 6.67e-11
-#define dt 10
+#define dt 50000
 
 // // forza applicata al corpo 2 esercitata dal corpo 1
 void compute_ex_force(int body2, int body1){
@@ -13,10 +13,6 @@ void compute_ex_force(int body2, int body1){
 	long double distance[3] = {x[body2] - x[body1], y[body2] - y[body1], z[body2] - z[body1]};
 	long double dist = sqrt(pow(x[body2] - x[body1],2) + pow(y[body2] - y[body1],2) + pow(z[body2] - z[body1],2));
 	long double unit_vector[3] = {distance[0]/fabs(distance[0]), distance[1]/fabs(distance[1]), distance[2]/fabs(distance[2])};	
-
-	assert(distance[0] != 0);
-	assert(distance[1] != 0);
-	assert(distance[2] != 0);
 
 	force[0] = -G*((mass[body1]*mass[body2]/pow(dist, 2)))*unit_vector[0];
 	force[1] = -G*((mass[body1]*mass[body2]/pow(dist, 2)))*unit_vector[1];

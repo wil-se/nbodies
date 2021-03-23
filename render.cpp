@@ -14,7 +14,7 @@
 // angle of rotation for the camera direction
 float angle=0.0f;
 // actual vector representing the camera's direction
-float lxcam=-30.0f,lzcam=-30.0f, lycam=-30.0f;
+float lxcam=-60.0f,lzcam=-60.0f, lycam=-30.0f;
 // XZ position of the camera
 float xcam=250.0f,zcam=250.0f,ycam=250.0f;
 float deltaAngle = 0.0f;
@@ -22,13 +22,7 @@ int xOrigin = -1;
 int yOrigin = -1;
 
 
-void display() {
-		
-    compute_ex_forces();
-		print_csv_bodies();
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
+void draw_axis(){
   glBegin(GL_LINES);
 
     glColor3f (255.0, 255.0, 255.0);
@@ -56,28 +50,31 @@ void display() {
     glVertex3f(0.0, 0.0, 0.0);
     glVertex3f(0.0, 0.0, -100000000.0);
 
-    
     glEnd();
+}
 
-
-  for(int i=0; i<n; i++){
-
+void draw_body(int i){
   glPushMatrix();
-
-	  if(i == 0){
-		glColor3f(1.0, 1.0, 0.0);
-	  }
-	  if(i == 1){
-		glColor3f(0.0, 0.0, 100.0);
-	  }
-    if(i != 0 && i != 1){
-      glColor3f(0.0, 255.0, 0.0);
-    }
+  glColor3f(0, 100.0, 0.0);
 	  
    glTranslatef (x[i], y[i], z[i]);
-    glutWireSphere(2.0, 16.0, 16.0);
+    glutWireSphere(mass[i]/100000, 16.0, 16.0);
   glPopMatrix();
 
+}
+
+void display() {
+		
+    compute_ex_forces();
+		print_csv_bodies();
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  draw_axis();
+  
+
+  for(int i=0; i<n; i++){
+      draw_body(i);
+  
   }
   glFlush();
   glutSwapBuffers();
