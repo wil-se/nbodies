@@ -26,10 +26,9 @@ void display() {
 		
     compute_ex_forces();
 		print_csv_bodies();
-
-
-  for(int i=0; i<n; i++){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
   glBegin(GL_LINES);
 
     glColor3f (255.0, 255.0, 255.0);
@@ -60,6 +59,9 @@ void display() {
     
     glEnd();
 
+
+  for(int i=0; i<n; i++){
+
   glPushMatrix();
 
 	  if(i == 0){
@@ -75,10 +77,10 @@ void display() {
    glTranslatef (x[i], y[i], z[i]);
     glutWireSphere(2.0, 16.0, 16.0);
   glPopMatrix();
-  glFlush();
-  glutSwapBuffers();
 
   }
+  glFlush();
+  glutSwapBuffers();
 
 }
 
