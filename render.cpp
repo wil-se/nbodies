@@ -61,90 +61,80 @@ void draw_body(int i){
 }
 
 void display_tree(bnode* node){
-          queue* q = create_queue(1024);
-        enqueue(q, node);
-        glBegin(GL_LINES);
+  queue* q = create_queue(1024);
+  enqueue(q, node);
+  glBegin(GL_LINES);
         
-        while(q->size != 0){
-                bnode* curr = dequeue(q);
+  while(q->size != 0){
+    bnode* curr = dequeue(q);
 
-                glColor3f (0, 100, 250);
-                glVertex3f(curr->min_x, curr->min_y, curr->min_z);
-                glVertex3f(curr->max_x, curr->min_y, curr->min_z);
+    glColor3f (0, 250, 250);
+    glVertex3f(curr->min_x, curr->min_y, curr->min_z);
+    glVertex3f(curr->max_x, curr->min_y, curr->min_z);
 
-                glColor3f (0, 100, 250);
-                glVertex3f(curr->min_x, curr->min_y, curr->max_z);
-                glVertex3f(curr->max_x, curr->min_y, curr->max_z);
+    glColor3f (0, 250, 250);
+    glVertex3f(curr->min_x, curr->min_y, curr->max_z);
+    glVertex3f(curr->max_x, curr->min_y, curr->max_z);
 
-                glColor3f (0, 100, 250);
-                glVertex3f(curr->min_x, curr->max_y, curr->min_z);
-                glVertex3f(curr->max_x, curr->max_y, curr->min_z);
+    glColor3f (0, 250, 250);
+    glVertex3f(curr->min_x, curr->max_y, curr->min_z);
+    glVertex3f(curr->max_x, curr->max_y, curr->min_z);
 
-                glColor3f (0, 100, 250);
-                glVertex3f(curr->min_x, curr->max_y, curr->max_z);
-                glVertex3f(curr->max_x, curr->max_y, curr->max_z);
+    glColor3f (0, 250, 250);
+    glVertex3f(curr->min_x, curr->max_y, curr->max_z);
+    glVertex3f(curr->max_x, curr->max_y, curr->max_z);
 
+    glColor3f (250, 0, 0);
+    glVertex3f(curr->min_x, curr->min_y, curr->min_z);
+    glVertex3f(curr->min_x, curr->max_y, curr->min_z);
 
-                glColor3f (250, 0, 0);
-                glVertex3f(curr->min_x, curr->min_y, curr->min_z);
-                glVertex3f(curr->min_x, curr->max_y, curr->min_z);
+    glColor3f (250, 0, 0);
+    glVertex3f(curr->min_x, curr->min_y, curr->max_z);
+    glVertex3f(curr->min_x, curr->max_y, curr->max_z);
 
-                glColor3f (250, 0, 0);
-                glVertex3f(curr->min_x, curr->min_y, curr->max_z);
-                glVertex3f(curr->min_x, curr->max_y, curr->max_z);
+    glColor3f (250, 0, 0);
+    glVertex3f(curr->max_x, curr->min_y, curr->min_z);
+    glVertex3f(curr->max_x, curr->max_y, curr->min_z);
 
-                glColor3f (250, 0, 0);
-                glVertex3f(curr->max_x, curr->min_y, curr->min_z);
-                glVertex3f(curr->max_x, curr->max_y, curr->min_z);
+    glColor3f (250, 0, 0);
+    glVertex3f(curr->max_x, curr->min_y, curr->max_z);
+    glVertex3f(curr->max_x, curr->max_y, curr->max_z);
 
-                glColor3f (250, 0, 0);
-                glVertex3f(curr->max_x, curr->min_y, curr->max_z);
-                glVertex3f(curr->max_x, curr->max_y, curr->max_z);
+    glColor3f (0, 250, 0);
+    glVertex3f(curr->min_x, curr->min_y, curr->min_z);
+    glVertex3f(curr->min_x, curr->min_y, curr->max_z);
 
+    glColor3f (0, 250, 0);
+    glVertex3f(curr->min_x, curr->max_y, curr->min_z);
+    glVertex3f(curr->min_x, curr->max_y, curr->max_z);
 
+    glColor3f (0, 250, 0);
+    glVertex3f(curr->max_x, curr->min_y, curr->min_z);
+    glVertex3f(curr->max_x, curr->min_y, curr->max_z);
 
+    glColor3f (0, 250, 0);
+    glVertex3f(curr->max_x, curr->max_y, curr->min_z);
+    glVertex3f(curr->max_x, curr->max_y, curr->max_z);
 
-                glColor3f (0, 250, 0);
-                glVertex3f(curr->min_x, curr->min_y, curr->min_z);
-                glVertex3f(curr->min_x, curr->min_y, curr->max_z);
-
-                glColor3f (0, 250, 0);
-                glVertex3f(curr->min_x, curr->max_y, curr->min_z);
-                glVertex3f(curr->min_x, curr->max_y, curr->max_z);
-
-                glColor3f (0, 250, 0);
-                glVertex3f(curr->max_x, curr->min_y, curr->min_z);
-                glVertex3f(curr->max_x, curr->min_y, curr->max_z);
-
-                glColor3f (0, 250, 0);
-                glVertex3f(curr->max_x, curr->max_y, curr->min_z);
-                glVertex3f(curr->max_x, curr->max_y, curr->max_z);
-
-
-
-
-                if(curr->body == -2){
-                        enqueue(q, curr->o0);
-                        enqueue(q, curr->o1);
-                        enqueue(q, curr->o2);
-                        enqueue(q, curr->o3);
-                        enqueue(q, curr->o4);
-                        enqueue(q, curr->o5);
-                        enqueue(q, curr->o6);
-                        enqueue(q, curr->o7);
-                }
-        }
-
-                glEnd();
-
-
-        destruct_queue(q);
+    if(curr->body == -2){
+      enqueue(q, curr->o0);
+      enqueue(q, curr->o1);
+      enqueue(q, curr->o2);
+      enqueue(q, curr->o3);
+      enqueue(q, curr->o4);
+      enqueue(q, curr->o5);
+      enqueue(q, curr->o6);
+      enqueue(q, curr->o7);
+    }
+  }
+  glEnd();
+  destruct_queue(q);
 }
 
 void display_seq_ex() {
+  print_csv_bodies();
   compute_ex_forces();
-	print_csv_bodies();
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   draw_axis();
   for(int i=0; i<n; i++){
       draw_body(i);
@@ -154,16 +144,14 @@ void display_seq_ex() {
 }
 
 void display_seq_bh() {
-  //print_csv_bodies();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+  print_csv_bodies();
   bnode* root;
-		root = (bnode*)malloc(sizeof(bnode));
-		build_barnes_tree(root);
-    display_tree(root);
-		compute_barnes_forces_all(root, 1);
-		destroy_barnes_tree(root);
-
+	root = (bnode*)malloc(sizeof(bnode));
+	build_barnes_tree(root);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  display_tree(root);
+	compute_barnes_forces_all(root, 0);
+	destroy_barnes_tree(root);
   //draw_axis();
   for(int i=0; i<n; i++){
       draw_body(i);

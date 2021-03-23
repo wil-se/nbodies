@@ -16,4 +16,3 @@ for i in range(int(bodies_number)):
         #random.randint(200, 1000))
         
         ))                # sz
-

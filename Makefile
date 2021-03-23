@@ -12,4 +12,3 @@ nbody: main.cpp
 
 run: nbody
 	./main.o
-
