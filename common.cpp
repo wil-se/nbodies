@@ -4,7 +4,7 @@
 #include "common.h"
 
 #define G 6.67e-11
-#define dt 10
+#define dt 1
 
 int n;
 long  double *x, *y, *z, *new_x, *new_y, *new_z, *new_sx, *new_sy, *new_sz, *mass, *sx, *sy, *sz;
