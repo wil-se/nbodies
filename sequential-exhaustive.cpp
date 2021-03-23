@@ -4,7 +4,7 @@
 #include <cassert>
 #include "common.h"
 #define G 6.67e-11
-#define dt 50000
+#define dt 5000
 
 // forza applicata al corpo 2 esercitata dal corpo 1
 void compute_ex_force(int body2, int body1){

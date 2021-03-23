@@ -86,7 +86,7 @@ void timer(int v) {
   glLoadIdentity();
   gluLookAt(xcam,ycam, zcam, xcam+lxcam,ycam+lycam,zcam+lzcam, 0.0f,1.0f,0.0f);
   glutPostRedisplay();
-  glutTimerFunc(100, timer, v);
+  glutTimerFunc(1, timer, v);
 }
 
 void reshape(GLint w, GLint h) {
