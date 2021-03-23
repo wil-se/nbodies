@@ -14,9 +14,9 @@
 // angle of rotation for the camera direction
 float angle=0.0f;
 // actual vector representing the camera's direction
-float lxcam=20.0f,lzcam=-90.0f, lycam=20.0f;
+float lxcam=-30.0f,lzcam=-30.0f, lycam=-30.0f;
 // XZ position of the camera
-float xcam=0.0f,zcam=300.0f,ycam=0.0f;
+float xcam=500.0f,zcam=500.0f,ycam=500.0f;
 float deltaAngle = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
@@ -30,6 +30,36 @@ void display() {
 
   for(int i=0; i<n; i++){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glBegin(GL_LINES);
+
+    glColor3f (255.0, 255.0, 255.0);
+    glVertex3f(0.0, 0.0, 0.0);
+    glVertex3f(100000000.0, 0.0, 0.0);
+
+    glColor3f (255.0, 255.0, 255.0);
+    glVertex3f(0.0, 0.0, 0.0);
+    glVertex3f(0.0, 100000000.0, 0.0);
+
+    glColor3f (255.0, 255.0, 255.0);
+    glVertex3f(0.0, 0.0, 0.0);
+    glVertex3f(0.0, 0.0, 100000000.0);
+
+    
+    glColor3f (255.0, 255.0, 255.0);
+    glVertex3f(0.0, 0.0, 0.0);
+    glVertex3f(-100000000.0, 0.0, 0.0);
+
+    glColor3f (255.0, 255.0, 255.0);
+    glVertex3f(0.0, 0.0, 0.0);
+    glVertex3f(0.0, -100000000.0, 0.0);
+
+    glColor3f (255.0, 255.0, 255.0);
+    glVertex3f(0.0, 0.0, 0.0);
+    glVertex3f(0.0, 0.0, -100000000.0);
+
+    
+    glEnd();
+
   glPushMatrix();
 
 	  if(i == 0){
@@ -51,7 +81,6 @@ void display() {
 
 
 void timer(int v) {
-  print_csv_bodies();
   glLoadIdentity();
   gluLookAt(xcam,ycam, zcam, xcam+lxcam,ycam+lycam,zcam+lzcam, 0.0f,1.0f,0.0f);
   glutPostRedisplay();
@@ -67,7 +96,7 @@ void reshape(GLint w, GLint h) {
 }
 
 void processSpecialKeys(int key, int xx, int yy) {
-  float fraction = 0.5f;
+  float fraction = 1.5f;
 
 	switch (key) {
 		case GLUT_KEY_LEFT :
@@ -111,7 +140,7 @@ void mouseMove(int xcam, int ycam) {
   }
   if (yOrigin >= 0) {
     deltaAngle = (ycam - yOrigin) * 0.005f;
-    lycam = -sin(angle - deltaAngle);
+    lycam = sin(angle - deltaAngle);
   }
 }
 
