@@ -27,28 +27,28 @@ void draw_axis(){
 
     glColor3f (255.0, 255.0, 255.0);
     glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(100000000.0, 0.0, 0.0);
+    glVertex3f(10000000000000000.0, 0.0, 0.0);
 
     glColor3f (255.0, 255.0, 255.0);
     glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, 100000000.0, 0.0);
+    glVertex3f(0.0, 10000000000000000.0, 0.0);
 
     glColor3f (255.0, 255.0, 255.0);
     glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, 0.0, 100000000.0);
+    glVertex3f(0.0, 0.0, 10000000000000000.0);
 
     
     glColor3f (255.0, 255.0, 255.0);
     glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(-100000000.0, 0.0, 0.0);
+    glVertex3f(-10000000000000000.0, 0.0, 0.0);
 
     glColor3f (255.0, 255.0, 255.0);
     glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, -100000000.0, 0.0);
+    glVertex3f(0.0, -10000000000000000.0, 0.0);
 
     glColor3f (255.0, 255.0, 255.0);
     glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, 0.0, -100000000.0);
+    glVertex3f(0.0, 0.0, -10000000000000000.0);
 
     glEnd();
 }
@@ -93,7 +93,7 @@ void reshape(GLint w, GLint h) {
   glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(90.0, (GLfloat)w/(GLfloat)h, 1.0, 10000.0);
+  gluPerspective(90.0, (GLfloat)w/(GLfloat)h, 1.0, 10000000000000000.0);
   glMatrixMode(GL_MODELVIEW);
 }
 
