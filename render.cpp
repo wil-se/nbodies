@@ -58,7 +58,7 @@ void draw_body(int i){
   glColor3f(0, 100.0, 0.0);
 	  
    glTranslatef (x[i], y[i], z[i]);
-    glutWireSphere(mass[i]/100000, 16.0, 16.0);
+    glutWireSphere(100, 16.0, 16.0);
   glPopMatrix();
 
 }
@@ -86,7 +86,7 @@ void timer(int v) {
   glLoadIdentity();
   gluLookAt(xcam,ycam, zcam, xcam+lxcam,ycam+lycam,zcam+lzcam, 0.0f,1.0f,0.0f);
   glutPostRedisplay();
-  glutTimerFunc(1, timer, v);
+  glutTimerFunc(100, timer, v);
 }
 
 void reshape(GLint w, GLint h) {

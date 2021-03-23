@@ -80,7 +80,7 @@ void set_vectors(){
         	z[i] = new_z[i];
         	sx[i] = new_sx[i];
         	sy[i] = new_sy[i];
-        	sy[i] = new_sz[i];
+        	sz[i] = new_sz[i];
 	}       
 }
 
