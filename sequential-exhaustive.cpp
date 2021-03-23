@@ -18,9 +18,9 @@ void compute_ex_force(int body2, int body1){
 	force[1] = -G*((mass[body1]*mass[body2]/pow(dist, 2)))*unit_vector[1];
 	force[2] = -G*((mass[body1]*mass[body2]/pow(dist, 2)))*unit_vector[2];
 	
-	acc[0] = force[0]/mass[body2];
-	acc[1] = force[1]/mass[body2];
-	acc[2] = force[2]/mass[body2];
+	acc[0] = force[0]/mass[body1];
+	acc[1] = force[1]/mass[body1];
+	acc[2] = force[2]/mass[body1];
 	
 	new_x[body2] += sx[body2]*dt + (acc[0])*dt*dt*0.5;
 	new_y[body2] += sy[body2]*dt + (acc[1])*dt*dt*0.5;
@@ -36,9 +36,9 @@ void compute_ex_force(int body2, int body1){
 	new_force[1] = -G*((mass[body1]*mass[body2]/pow(dist, 2)))*new_unit_vector[1];
 	new_force[2] = -G*((mass[body1]*mass[body2]/pow(dist, 2)))*new_unit_vector[2];
 
-	new_acc[0] = new_force[0]/mass[body2];
-	new_acc[1] = new_force[1]/mass[body2];
-	new_acc[2] = new_force[2]/mass[body2];
+	new_acc[0] = new_force[0]/mass[body1];
+	new_acc[1] = new_force[1]/mass[body1];
+	new_acc[2] = new_force[2]/mass[body1];
 	
 	new_sx[body2] += 0.5*(acc[0] + new_acc[0])*dt;
 	new_sy[body2] += 0.5*(acc[1] + new_acc[1])*dt;
