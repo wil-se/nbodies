@@ -3,6 +3,7 @@
 #include <math.h>
 #include "common.h"
 #include "sequential-exhaustive.h"
+
 #include "render.h"
 
 #ifdef __APPLE_CC__
@@ -20,7 +21,6 @@ float xcam=250.0f,zcam=250.0f,ycam=250.0f;
 float deltaAngle = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
-
 
 void draw_axis(){
   glBegin(GL_LINES);
@@ -60,11 +60,111 @@ void draw_body(int i){
   glPopMatrix();
 }
 
-void display() {
+void display_tree(bnode* node){
+          queue* q = create_queue(1024);
+        enqueue(q, node);
+        glBegin(GL_LINES);
+        
+        while(q->size != 0){
+                bnode* curr = dequeue(q);
+
+                glColor3f (0, 100, 250);
+                glVertex3f(curr->min_x, curr->min_y, curr->min_z);
+                glVertex3f(curr->max_x, curr->min_y, curr->min_z);
+
+                glColor3f (0, 100, 250);
+                glVertex3f(curr->min_x, curr->min_y, curr->max_z);
+                glVertex3f(curr->max_x, curr->min_y, curr->max_z);
+
+                glColor3f (0, 100, 250);
+                glVertex3f(curr->min_x, curr->max_y, curr->min_z);
+                glVertex3f(curr->max_x, curr->max_y, curr->min_z);
+
+                glColor3f (0, 100, 250);
+                glVertex3f(curr->min_x, curr->max_y, curr->max_z);
+                glVertex3f(curr->max_x, curr->max_y, curr->max_z);
+
+
+                glColor3f (250, 0, 0);
+                glVertex3f(curr->min_x, curr->min_y, curr->min_z);
+                glVertex3f(curr->min_x, curr->max_y, curr->min_z);
+
+                glColor3f (250, 0, 0);
+                glVertex3f(curr->min_x, curr->min_y, curr->max_z);
+                glVertex3f(curr->min_x, curr->max_y, curr->max_z);
+
+                glColor3f (250, 0, 0);
+                glVertex3f(curr->max_x, curr->min_y, curr->min_z);
+                glVertex3f(curr->max_x, curr->max_y, curr->min_z);
+
+                glColor3f (250, 0, 0);
+                glVertex3f(curr->max_x, curr->min_y, curr->max_z);
+                glVertex3f(curr->max_x, curr->max_y, curr->max_z);
+
+
+
+
+                glColor3f (0, 250, 0);
+                glVertex3f(curr->min_x, curr->min_y, curr->min_z);
+                glVertex3f(curr->min_x, curr->min_y, curr->max_z);
+
+                glColor3f (0, 250, 0);
+                glVertex3f(curr->min_x, curr->max_y, curr->min_z);
+                glVertex3f(curr->min_x, curr->max_y, curr->max_z);
+
+                glColor3f (0, 250, 0);
+                glVertex3f(curr->max_x, curr->min_y, curr->min_z);
+                glVertex3f(curr->max_x, curr->min_y, curr->max_z);
+
+                glColor3f (0, 250, 0);
+                glVertex3f(curr->max_x, curr->max_y, curr->min_z);
+                glVertex3f(curr->max_x, curr->max_y, curr->max_z);
+
+
+
+
+                if(curr->body == -2){
+                        enqueue(q, curr->o0);
+                        enqueue(q, curr->o1);
+                        enqueue(q, curr->o2);
+                        enqueue(q, curr->o3);
+                        enqueue(q, curr->o4);
+                        enqueue(q, curr->o5);
+                        enqueue(q, curr->o6);
+                        enqueue(q, curr->o7);
+                }
+        }
+
+                glEnd();
+
+
+        destruct_queue(q);
+}
+
+void display_seq_ex() {
   compute_ex_forces();
 	print_csv_bodies();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   draw_axis();
+  for(int i=0; i<n; i++){
+      draw_body(i);
+  }
+  glFlush();
+  glutSwapBuffers();
+}
+
+void display_seq_bh() {
+  //print_csv_bodies();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  bnode* root;
+		root = (bnode*)malloc(sizeof(bnode));
+		build_barnes_tree(root);
+    display_tree(root);
+		compute_barnes_forces_all(root, 1);
+		destroy_barnes_tree(root);
+
+  //draw_axis();
   for(int i=0; i<n; i++){
       draw_body(i);
   }
@@ -136,12 +236,27 @@ void mouseMove(int xcam, int ycam) {
   }
 }
 
-void init_opengl(int argc, char** argv) {
+void render_sequential_exhaustive(int argc, char** argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(1000, 1000);
   glutCreateWindow("space");
-  glutDisplayFunc(display);
+  glutDisplayFunc(display_seq_ex);
+  glutReshapeFunc(reshape);
+	glutSpecialFunc(processSpecialKeys);
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
+  glutTimerFunc(100, timer, 0);
+  glEnable(GL_DEPTH_TEST);
+  glutMainLoop();
+}
+
+void render_sequential_barneshut(int argc, char** argv) {
+  glutInit(&argc, argv);
+  glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+  glutInitWindowSize(1000, 1000);
+  glutCreateWindow("space");
+  glutDisplayFunc(display_seq_bh);
   glutReshapeFunc(reshape);
 	glutSpecialFunc(processSpecialKeys);
 	glutMouseFunc(mouseButton);

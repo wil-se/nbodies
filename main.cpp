@@ -6,6 +6,6 @@
 
 int main(int argc, char** argv) {
   set_memory();
-  init_opengl(argc, argv);
+  render_sequential_barneshut(argc, argv);
   free_memory();
 }

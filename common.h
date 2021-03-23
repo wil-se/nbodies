@@ -1,5 +1,5 @@
 #define G 6.67e-11
-#define dt 1000000
+#define dt 100000
 
 extern int n;
 extern long  double *x, *y, *z, *new_x, *new_y, *new_z, *new_sx, *new_sy, *new_sz, *mass, *sx, *sy, *sz;
