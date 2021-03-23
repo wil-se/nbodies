@@ -16,7 +16,7 @@ float angle=0.0f;
 // actual vector representing the camera's direction
 float lxcam=-30.0f,lzcam=-30.0f, lycam=-30.0f;
 // XZ position of the camera
-float xcam=500.0f,zcam=500.0f,ycam=500.0f;
+float xcam=250.0f,zcam=250.0f,ycam=250.0f;
 float deltaAngle = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
@@ -68,6 +68,9 @@ void display() {
 	  if(i == 1){
 		glColor3f(0.0, 0.0, 100.0);
 	  }
+    if(i != 0 && i != 1){
+      glColor3f(0.0, 255.0, 0.0);
+    }
 	  
    glTranslatef (x[i], y[i], z[i]);
     glutWireSphere(2.0, 16.0, 16.0);
