@@ -177,7 +177,7 @@ void reshape(GLint w, GLint h) {
 }
 
 void processSpecialKeys(int key, int xx, int yy) {
-  float fraction = 2.5f;
+  float fraction = 10.0f;
 	switch (key) {
 		case GLUT_KEY_LEFT :
 			xcam += lxcam * fraction;
@@ -220,7 +220,7 @@ void mouseMove(int xcam, int ycam) {
   }
   if (yOrigin >= 0) {
     deltaAngle = (ycam - yOrigin) * 0.005f;
-    lycam = sin(angle - deltaAngle);
+    lycam = tan(angle - deltaAngle);
   }
 }
 
