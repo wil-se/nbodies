@@ -3,12 +3,8 @@
 #include <math.h>
 #include "common.h"
 
-#define G 6.67e-11
-#define dt 1
-
 int n;
 long  double *x, *y, *z, *new_x, *new_y, *new_z, *new_sx, *new_sy, *new_sz, *mass, *sx, *sy, *sz;
-
 
 void print_csv_body(int i) {
         printf("%d,%Lf,%Lf,%Lf,%Lf,%Lf,%Lf,%Lf\n", i, x[i], y[i], z[i], mass[i], sx[i], sy[i], sz[i]);
@@ -83,4 +79,3 @@ void set_vectors(){
         	sz[i] = new_sz[i];
 	}       
 }
-

@@ -25,60 +25,51 @@ int yOrigin = -1;
 void draw_axis(){
   glBegin(GL_LINES);
 
-    glColor3f (255.0, 255.0, 255.0);
-    glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(10000000000000000.0, 0.0, 0.0);
+  glColor3f (255.0, 0.0, 0.0);
+  glVertex3f(0.0, 0.0, 0.0);
+  glVertex3f(10000000000000000.0, 0.0, 0.0);
 
-    glColor3f (255.0, 255.0, 255.0);
-    glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, 10000000000000000.0, 0.0);
+  glColor3f (0.0, 255.0, 0.0);
+  glVertex3f(0.0, 0.0, 0.0);
+  glVertex3f(0.0, 10000000000000000.0, 0.0);
 
-    glColor3f (255.0, 255.0, 255.0);
-    glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, 0.0, 10000000000000000.0);
+  glColor3f (0.0, 0.0, 255.0);
+  glVertex3f(0.0, 0.0, 0.0);
+  glVertex3f(0.0, 0.0, 10000000000000000.0);
+ 
+  glColor3f (255.0, 0.0, 0.0);
+  glVertex3f(0.0, 0.0, 0.0);
+  glVertex3f(-10000000000000000.0, 0.0, 0.0);
 
-    
-    glColor3f (255.0, 255.0, 255.0);
-    glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(-10000000000000000.0, 0.0, 0.0);
+  glColor3f (0, 255.0, 0.0);
+  glVertex3f(0.0, 0.0, 0.0);
+  glVertex3f(0.0, -10000000000000000.0, 0.0);
 
-    glColor3f (255.0, 255.0, 255.0);
-    glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, -10000000000000000.0, 0.0);
+  glColor3f (0.0, 0.0, 255.0);
+  glVertex3f(0.0, 0.0, 0.0);
+  glVertex3f(0.0, 0.0, -10000000000000000.0);
 
-    glColor3f (255.0, 255.0, 255.0);
-    glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, 0.0, -10000000000000000.0);
-
-    glEnd();
+  glEnd();
 }
 
 void draw_body(int i){
   glPushMatrix();
-  glColor3f(0, 100.0, 0.0);
-	  
-   glTranslatef (x[i], y[i], z[i]);
-    glutWireSphere(100, 16.0, 16.0);
+  glColor3f(100.0, 100.0, 100.0);  
+  glTranslatef (x[i], y[i], z[i]);
+  glutWireSphere(100, 16.0, 16.0);
   glPopMatrix();
-
 }
 
 void display() {
-		
-    compute_ex_forces();
-		print_csv_bodies();
+  compute_ex_forces();
+	print_csv_bodies();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
   draw_axis();
-  
-
   for(int i=0; i<n; i++){
       draw_body(i);
-  
   }
   glFlush();
   glutSwapBuffers();
-
 }
 
 
@@ -99,7 +90,6 @@ void reshape(GLint w, GLint h) {
 
 void processSpecialKeys(int key, int xx, int yy) {
   float fraction = 2.5f;
-
 	switch (key) {
 		case GLUT_KEY_LEFT :
 			xcam += lxcam * fraction;
