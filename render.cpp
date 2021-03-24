@@ -21,6 +21,7 @@ float xcam=250.0f,zcam=250.0f,ycam=250.0f;
 float deltaAngle = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
+float camera_speed = 50.0f;
 
 void draw_axis(){
   glBegin(GL_LINES);
@@ -144,7 +145,7 @@ void display_seq_ex() {
 }
 
 void display_seq_bh() {
-  print_csv_bodies();
+  //print_csv_bodies();
   bnode* root;
 	root = (bnode*)malloc(sizeof(bnode));
 	build_barnes_tree(root);
@@ -177,23 +178,23 @@ void reshape(GLint w, GLint h) {
 }
 
 void processSpecialKeys(int key, int xx, int yy) {
-  float fraction = 10.0f;
+  printf("LXCAM: %f LYCAM: %f\n", lxcam, lycam);
 	switch (key) {
 		case GLUT_KEY_LEFT :
-			xcam += lxcam * fraction;
-			ycam += lycam * fraction;
+			xcam += lxcam * camera_speed;
+			ycam += lycam * camera_speed;
       break;
 		case GLUT_KEY_RIGHT :
-			xcam -= lxcam * fraction;
-			ycam -= lycam * fraction;
+			xcam -= lxcam * camera_speed;
+			ycam -= lycam * camera_speed;
       break;
 		case GLUT_KEY_UP :
-			xcam += lxcam * fraction;
-			zcam += lzcam * fraction;
+			xcam += lxcam * camera_speed;
+			zcam += lzcam * camera_speed;
 			break;
 		case GLUT_KEY_DOWN :
-			xcam -= lxcam * fraction;
-			zcam -= lzcam * fraction;
+			xcam -= lxcam * camera_speed;
+			zcam -= lzcam * camera_speed;
 			break;
 	}
 }
@@ -215,12 +216,12 @@ void mouseButton(int button, int state, int xcam, int ycam) {
 void mouseMove(int xcam, int ycam) {
   if (xOrigin >= 0) {
     deltaAngle = (xcam - xOrigin) * 0.005f;
-    lxcam = sin(angle - deltaAngle);
-    lzcam = -cos(angle - deltaAngle);
+    lxcam = sin(angle - deltaAngle) * camera_speed;
+    lzcam = -cos(angle - deltaAngle) * camera_speed;
   }
   if (yOrigin >= 0) {
     deltaAngle = (ycam - yOrigin) * 0.005f;
-    lycam = tan(angle - deltaAngle);
+    lycam = tan(angle - deltaAngle) * camera_speed;
   }
 }
 
