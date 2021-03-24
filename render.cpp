@@ -228,7 +228,7 @@ void mouseMove(int xcam, int ycam) {
 void render_sequential_exhaustive(int argc, char** argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-  glutInitWindowSize(1000, 1000);
+  glutInitWindowSize(1600, 900);
   glutCreateWindow("space");
   glutDisplayFunc(display_seq_ex);
   glutReshapeFunc(reshape);
@@ -243,7 +243,7 @@ void render_sequential_exhaustive(int argc, char** argv) {
 void render_sequential_barneshut(int argc, char** argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-  glutInitWindowSize(1000, 1000);
+  glutInitWindowSize(1600, 900);
   glutCreateWindow("space");
   glutDisplayFunc(display_seq_bh);
   glutReshapeFunc(reshape);
