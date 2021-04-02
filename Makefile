@@ -1,5 +1,6 @@
 CFLAGS = -lm -lglut -lGL -lGLU
-CC = g++
+CC = nvcc
+RCDIO = -gencode arch=compute_35,code=sm_35
 
 .PHONY: clean nbody test
 
@@ -7,8 +8,8 @@ CC = g++
 clean:
 	rm $(OBJECTS) a.out main.o
 
-nbody: main.cpp
-	$(CC) common.cpp sequential-exhaustive.cpp sequential-barneshut.cpp main.cpp render.cpp -o main.o $(CFLAGS)
+nbody:
+	$(CC) $(RCDIO) common.cpp sequential-exhaustive.cpp sequential-barneshut.cpp main.cpp render.cpp cuda-barneshut.cu -o main.o $(CFLAGS)
 
 run: nbody
 	./main.o
