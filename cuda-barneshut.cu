@@ -28,10 +28,6 @@ inline void checkCudaLastError(char* f, int l) {
 
 typedef double coord;
 
-
-//__constant__ coord *X, *Y, *Z, *MASS, *SX, *SY, *SZ;
-
-
 __device__ coord rres[] = {0, 0, 0, 0, 0, 0};
 
 __global__ void ComputeBox(coord *x, coord *y, coord *z, coord *mass, coord *sx, coord *sy, coord *sz, int n, coord *result) {
@@ -40,42 +36,51 @@ __global__ void ComputeBox(coord *x, coord *y, coord *z, coord *mass, coord *sx,
         unsigned int i = blockIdx.x * blockDim.x + tid;
 
         extern __shared__ coord s_x[];
+        coord *s_y = s_x + blockDim.x*2;
+        coord *s_z = s_y + blockDim.x*2;
+
+        s_x[tid] = 0;
+        s_y[tid] = 0;
+        s_z[tid] = 0;
 
         if (n <= i) {
                 return;
         }
 
-        s_x[tid] = x[i];
-        s_x[tid + 1] = y[i];
-        s_x[tid + 2] = z[i];
+        s_x[tid*2] = x[i];
+        s_x[tid*2 + 1] = x[i];
+        s_y[tid*2] = y[i];
+        s_y[tid*2 + 1] = y[i];
+        s_z[tid*2] = z[i];
+        s_z[tid*2 + 1] = z[i];
 
-
-        coord minmax[] = {s_x[tid], s_x[tid], s_x[tid + 1], s_x[tid + 1], s_x[tid + 2], s_x[tid + 2]};
+        int max_index = tid * 2;
+        int min_index = tid * 2 + 1;
 
         __syncthreads();
-        for(unsigned int s = 3; s < n; s *= 2) {
-                printf("[%d,%d] %lf, %lf, %lf\n\n", s, tid, s_x[tid*3], s_x[tid*3 + 1], s_x[tid*3 + 2]);
+        for(unsigned int s = 1; s < n; s *= 2) {
                 if (tid % (2*s) == 0 && tid + s < n) {
-                        printf("[%d] MAX ON X IS %f OVER %f AND %f\n", tid, fmax(minmax[0], s_x[tid + s]), minmax[0], s_x[tid + s]);
-                        minmax[0] = fmax(minmax[0], s_x[tid + s]);
-                        minmax[1] = fmin(minmax[1], s_x[tid + s]);
-                        minmax[2] = fmax(minmax[2], s_x[tid + s + 1]);
-                        minmax[3] = fmin(minmax[3], s_x[tid + s + 1]);
-                        minmax[4] = fmax(minmax[4], s_x[tid + s + 2]);
-                        minmax[5] = fmin(minmax[5], s_x[tid + s + 2]);
+                        s_x[tid*2] = fmax(s_x[tid*2], s_x[tid*2 + 2*s]);
+                        s_x[tid*2 + 1] = fmin(s_x[tid*2 + 1], s_x[tid*2 + 2*s + 1]);
+                        s_y[tid*2] = fmax(s_y[tid*2], s_y[tid*2 + 2*s]);
+                        s_y[tid*2 + 1] = fmin(s_y[tid*2 + 1], s_y[tid*2 + 2*s + 1]);
+                        s_z[tid*2] = fmax(s_z[tid*2], s_z[tid*2 + 2*s]);
+                        s_z[tid*2 + 1] = fmin(s_z[tid*2 + 1], s_z[tid*2 + 2*s + 1]);
 
                 }
                 __syncthreads();
         }
 
         if (tid == 0) {
-                for (int i = 0; i < 6; i++) {
-                        result[i] = minmax[i];
-                        printf("[%d] %lf\n ", i, minmax[i]);
-                }
+                result[0] = s_x[0];
+                result[1] = s_x[1];
+                result[2] = s_y[0];
+                result[3] = s_y[1];
+                result[4] = s_z[0];
+                result[5] = s_z[1];
         }
-
 }
+
 
 void simulate_bh_cuda(){
         //cudaFuncSetCacheConfig(ComputeBox, cudaFuncCachePreferShared);
@@ -122,7 +127,7 @@ void simulate_bh_cuda(){
         int th_per_block = 1024;
         int blocks = N/1024 + 1;
 
-        ComputeBox<<<blocks, th_per_block, th_per_block*sizeof(coord)*3>>>(X, Y, Z, MASS, SX, SY, SZ, N, D_minmax);
+        ComputeBox<<<blocks, th_per_block, th_per_block*sizeof(coord)*3*2>>>(X, Y, Z, MASS, SX, SY, SZ, N, D_minmax);
 
         ASYNC_CHECK();
 
