@@ -7,11 +7,12 @@
 
 // forza applicata al corpo 2 esercitata dal corpo 1
 void compute_ex_force(int body2, int body1){
-	long double acc[3] = {0, 0, 0};
-	long double force[3] = {0, 0, 0};
-	long double distance[3] = {x[body2] - x[body1], y[body2] - y[body1], z[body2] - z[body1]};
-	long double dist = sqrt(pow(x[body2] - x[body1],2) + pow(y[body2] - y[body1],2) + pow(z[body2] - z[body1],2));
-	long double unit_vector[3] = {distance[0]/fabs(distance[0]), distance[1]/fabs(distance[1]), distance[2]/fabs(distance[2])};	
+	printf("x: %f y: %f z: %f\n", x[body1], y[body1], z[body1]);
+	double acc[3] = {0, 0, 0};
+	double force[3] = {0, 0, 0};
+	double distance[3] = {x[body2] - x[body1], y[body2] - y[body1], z[body2] - z[body1]};
+	double dist = sqrt(pow(x[body2] - x[body1],2) + pow(y[body2] - y[body1],2) + pow(z[body2] - z[body1],2));
+	double unit_vector[3] = {distance[0]/fabs(distance[0]), distance[1]/fabs(distance[1]), distance[2]/fabs(distance[2])};	
 
 	if(distance[0] == 0){
 		unit_vector[0] = 0;
@@ -35,11 +36,11 @@ void compute_ex_force(int body2, int body1){
 	new_y[body2] += sy[body2]*dt + (acc[1])*dt*dt*0.5;
 	new_z[body2] += sz[body2]*dt + (acc[2])*dt*dt*0.5;
 		
-	long double new_acc[3] = {0, 0, 0};
-	long double new_force[3] = {0, 0, 0};
-	long double new_distance[3] = {new_x[body2] - x[body1], new_y[body2] - y[body1], new_z[body2] - z[body1]};
-	long double new_dist = sqrt(pow(new_x[body2] - x[body1],2) + pow(new_y[body2] - y[body1],2) + pow(new_z[body2] - z[body1],2));
-	long double new_unit_vector[3] = {new_distance[0]/fabs(new_distance[0]), new_distance[1]/fabs(new_distance[1]), new_distance[2]/fabs(new_distance[2])};
+	double new_acc[3] = {0, 0, 0};
+	double new_force[3] = {0, 0, 0};
+	double new_distance[3] = {new_x[body2] - x[body1], new_y[body2] - y[body1], new_z[body2] - z[body1]};
+	double new_dist = sqrt(pow(new_x[body2] - x[body1],2) + pow(new_y[body2] - y[body1],2) + pow(new_z[body2] - z[body1],2));
+	double new_unit_vector[3] = {new_distance[0]/fabs(new_distance[0]), new_distance[1]/fabs(new_distance[1]), new_distance[2]/fabs(new_distance[2])};
 	
 	if(new_distance[0] == 0){
 		new_unit_vector[0] = 0;
@@ -72,6 +73,7 @@ void compute_ex_forces(){
 	for(int j=0; j<n; j++){
 		for(int k=0; k<n; k++){
 			if(j != k){
+				printf("x: %f y: %f z: %f\n", x[j], y[j], z[j]);
 				compute_ex_force(j, k);
 			}
 		}

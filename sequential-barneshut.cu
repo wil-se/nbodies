@@ -81,21 +81,21 @@ void print_tree(bnode* node){
 }
 
 void print_node(bnode* node){
-	printf("================================\nBODY: %d\nDEPTH: %d\nMAX X: %ld\nMAX Y: %ld\nMAX Z: %ld\nMIN X: %ld\nMIN Y: %ld\nMIN Z: %ld\nX: %Lf\nY: %Lf\nZ: %Lf\nMASS: %Lf\n", node->body, node->depth, node->max_x, node->max_y, node->max_z, node->min_x, node->min_y, node->min_z, node->x, node->y, node->z, node->mass);
+	printf("================================\nBODY: %d\nDEPTH: %d\nMAX X: %d\nMAX Y: %d\nMAX Z: %d\nMIN X: %d\nMIN Y: %d\nMIN Z: %d\nX: %f\nY: %f\nZ: %f\nMASS: %f\n", node->body, node->depth, node->max_x, node->max_y, node->max_z, node->min_x, node->min_y, node->min_z, node->x, node->y, node->z, node->mass);
 }
 
-long int get_bound(){
-	long double max = 0;
+int get_bound(){
+	double max = 0;
     for(int i=0; i<n; i++){
 		if(fabs(x[i]) > max){max = fabs(x[i]);}
         if(fabs(y[i]) > max){max = fabs(y[i]);}
         if(fabs(z[i]) > max){max = fabs(z[i]);}
     }
-	return ((long int)max%2==0)?(long int)max+2:(long int)max+3;
+	return ((int)max%2==0)?(int)max+2:(int)max+3;
 }
 
 void build_barnes_tree(bnode* root){
-    long int bound = get_bound();
+    int bound = get_bound();
 	root->body = -1;
     root->depth = 0;
     root->max_x = bound;
@@ -133,7 +133,7 @@ void destroy_barnes_tree(bnode* root){
 
 void generate_empty_children(bnode *node){
     int depth = node->depth+1;
-	long int scalar = fabs(node->max_x - node->min_x)/2;
+	int scalar = fabs(node->max_x - node->min_x)/2;
     bnode *o0, *o1, *o2, *o3, *o4, *o5, *o6, *o7;
 
     o0 = (bnode*)malloc(sizeof(bnode));
@@ -259,8 +259,8 @@ void generate_empty_children(bnode *node){
     node->o7 = o7;
 }
 
-bnode* get_octant(bnode* node, long double x, long double y, long double z){
-	long int scalar = fabs(node->max_x - node->min_x)/2;
+bnode* get_octant(bnode* node, double x, double y, double z){
+	int scalar = fabs(node->max_x - node->min_x)/2;
     bnode* result;
 
 	if(node->min_x + scalar <= x && x <= node->max_x && node->min_y + scalar <= y && y <= node->max_y && node->min_z + scalar <= z && z <= node->max_z){
@@ -290,17 +290,17 @@ bnode* get_octant(bnode* node, long double x, long double y, long double z){
     return result;
 }
 
-void update(bnode* node, int body, long double x, long double y, long double z, long double mass){
+void update(bnode* node, int body, double x, double y, double z, double mass){
 	if(node->body >= 0){
         node->body = -2;
     }
     if(node->body == -1){
         node->body = body;
     }
-    long double tmass = node->mass + mass;
-    long double tx = ((node->mass*node->x)+(mass*x))/tmass;
-	long double ty = ((node->mass*node->y)+(mass*y))/tmass;
-    long double tz = ((node->mass*node->z)+(mass*z))/tmass;
+    double tmass = node->mass + mass;
+    double tx = ((node->mass*node->x)+(mass*x))/tmass;
+	double ty = ((node->mass*node->y)+(mass*y))/tmass;
+    double tz = ((node->mass*node->z)+(mass*z))/tmass;
     node->mass = tmass;
     node->x = tx;
     node->y = ty;
@@ -308,7 +308,7 @@ void update(bnode* node, int body, long double x, long double y, long double z, 
 }
 
 void insert_body(bnode* node, int body){
-	long double bx = x[body], by = y[body], bz = z[body], bmass=mass[body];
+	double bx = x[body], by = y[body], bz = z[body], bmass=mass[body];
 	if(node->body == -1){
 		update(node, body, bx, by, bz, bmass);
 		return;
@@ -333,15 +333,15 @@ void insert_body(bnode* node, int body){
 
 void compute_barnes_forces(bnode* node, int body, double theta){
 	if(node->body == body || node->body == -1){return;}
-	long double ratio = fabs(node->max_x - node->min_x);;
-	long double line_distance = sqrt(pow(x[body] - node->x,2) + pow(y[body] - node->y,2) + pow(z[body] - node->z,2));;
+	double ratio = fabs(node->max_x - node->min_x);;
+	double line_distance = sqrt(pow(x[body] - node->x,2) + pow(y[body] - node->y,2) + pow(z[body] - node->z,2));;
 		
 	if(ratio/line_distance < theta || node->body >= 0){
-		long double acc[3] = {0, 0, 0};
-		long double force[3] = {0, 0, 0};
-		long double distance[3] = {x[body] - node->x, y[body] - node->y, z[body] - node->z};
-		long double dist = sqrt(pow(x[body] - node->x,2) + pow(y[body] - node->y,2) + pow(z[body] - node->z,2));
-        long double unit_vector[3] = {distance[0]/fabs(distance[0]), distance[1]/fabs(distance[1]), distance[2]/fabs(distance[2])};
+		double acc[3] = {0, 0, 0};
+		double force[3] = {0, 0, 0};
+		double distance[3] = {x[body] - node->x, y[body] - node->y, z[body] - node->z};
+		double dist = sqrt(pow(x[body] - node->x,2) + pow(y[body] - node->y,2) + pow(z[body] - node->z,2));
+        double unit_vector[3] = {distance[0]/fabs(distance[0]), distance[1]/fabs(distance[1]), distance[2]/fabs(distance[2])};
 		
         if(distance[0] == 0){
 		    unit_vector[0] = 0;
@@ -365,11 +365,11 @@ void compute_barnes_forces(bnode* node, int body, double theta){
 		new_y[body] += sy[body]*dt + (acc[1])*dt*dt*0.5;
 		new_z[body] += sz[body]*dt + (acc[2])*dt*dt*0.5;
 
-		long double new_acc[3] = {0, 0, 0};
-		long double new_force[3] = {0, 0, 0};
-		long double new_distance[3] = {new_x[body] - node->x, new_y[body] - node->y, new_z[body] - node->z};
-		long double new_dist = sqrt(pow(new_x[body] - node->x,2) + pow(new_y[body] - node->y,2) + pow(new_z[body] - node->z,2));
-        long double new_unit_vector[3] = {new_distance[0]/fabs(new_distance[0]), new_distance[1]/fabs(new_distance[1]), new_distance[2]/fabs(new_distance[2])};
+		double new_acc[3] = {0, 0, 0};
+		double new_force[3] = {0, 0, 0};
+		double new_distance[3] = {new_x[body] - node->x, new_y[body] - node->y, new_z[body] - node->z};
+		double new_dist = sqrt(pow(new_x[body] - node->x,2) + pow(new_y[body] - node->y,2) + pow(new_z[body] - node->z,2));
+        double new_unit_vector[3] = {new_distance[0]/fabs(new_distance[0]), new_distance[1]/fabs(new_distance[1]), new_distance[2]/fabs(new_distance[2])};
 
         if(new_distance[0] == 0){
 		    new_unit_vector[0] = 0;

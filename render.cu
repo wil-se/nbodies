@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <cuda.h>
+#include "device-common.h"
+#include "cuda-exhaustive.h"
 #include "common.h"
 #include "sequential-exhaustive.h"
 
@@ -145,22 +148,43 @@ void display_seq_ex() {
 }
 
 void display_seq_bh() {
-  //print_csv_bodies();
+  print_csv_bodies();
   bnode* root;
 	root = (bnode*)malloc(sizeof(bnode));
 	build_barnes_tree(root);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   display_tree(root);
-	compute_barnes_forces_all(root, 0);
+  for(int i=0; i<n; i++){
+      draw_body(i);
+  }
+  draw_axis();
+  glFlush();
+  glutSwapBuffers();
+  compute_barnes_forces_all(root, 1);
 	destroy_barnes_tree(root);
-  //draw_axis();
+}
+
+void display_cuda_ex() {
+  int block_amount = n/1024;
+  block_amount++;
+  int block_dim = n/block_amount;
+
+  set_new_memory_cuda<<<1, 1>>>();
+	set_new_vectors_cuda<<<block_amount, block_dim>>>();
+  cudaDeviceSynchronize();
+  compute_ex_forces_cuda<<<block_amount, block_dim>>>();
+  cudaDeviceSynchronize();
+  set_vectors_cuda<<<block_amount, block_dim>>>();
+  free_new_memory_cuda<<<1, 1>>>();
+  swap_memory();
+  
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   for(int i=0; i<n; i++){
       draw_body(i);
   }
   glFlush();
   glutSwapBuffers();
 }
-
 
 void timer(int v) {
   glLoadIdentity();
@@ -178,7 +202,6 @@ void reshape(GLint w, GLint h) {
 }
 
 void processSpecialKeys(int key, int xx, int yy) {
-  printf("LXCAM: %f LYCAM: %f\n", lxcam, lycam);
 	switch (key) {
 		case GLUT_KEY_LEFT :
 			xcam += lxcam * camera_speed;
@@ -235,7 +258,7 @@ void render_sequential_exhaustive(int argc, char** argv) {
 	glutSpecialFunc(processSpecialKeys);
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
-  glutTimerFunc(100, timer, 0);
+  glutTimerFunc(1, timer, 0);
   glEnable(GL_DEPTH_TEST);
   glutMainLoop();
 }
@@ -250,7 +273,22 @@ void render_sequential_barneshut(int argc, char** argv) {
 	glutSpecialFunc(processSpecialKeys);
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
-  glutTimerFunc(100, timer, 0);
+  glutTimerFunc(1, timer, 0);
+  glEnable(GL_DEPTH_TEST);
+  glutMainLoop();
+}
+
+void render_cuda_exhaustive(int argc, char** argv) {
+  glutInit(&argc, argv);
+  glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+  glutInitWindowSize(1600, 900);
+  glutCreateWindow("space");
+  glutDisplayFunc(display_cuda_ex);
+  glutReshapeFunc(reshape);
+	glutSpecialFunc(processSpecialKeys);
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
+  glutTimerFunc(1, timer, 0);
   glEnable(GL_DEPTH_TEST);
   glutMainLoop();
 }

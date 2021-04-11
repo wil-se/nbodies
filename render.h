@@ -13,3 +13,5 @@ void render_sequential_barneshut(int argc, char** argv);
 void draw_axis();
 void draw_body();
 void display_tree(bnode* node);
+void render_cuda_exhaustive(int argc, char** argv);
+void display_cuda_ex();

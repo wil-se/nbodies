@@ -1,14 +1,14 @@
 CFLAGS = -lm -lglut -lGL -lGLU
-CC = g++
+CC = nvcc
 
 .PHONY: clean nbody test
 
 
 clean:
-	rm $(OBJECTS) a.out main.o
+	rm *.o
 
-nbody: main.cpp
-	$(CC) common.cpp sequential-exhaustive.cpp sequential-barneshut.cpp main.cpp render.cpp -o main.o $(CFLAGS)
+nbody: main.cu
+	$(CC) -rdc=true device-common.cu cuda-exhaustive.cu common.cu sequential-exhaustive.cu sequential-barneshut.cu main.cu render.cu -o main.o $(CFLAGS)
 
 run: nbody
 	./main.o
