@@ -38,7 +38,7 @@ void swap_memory(){
     cudaMemcpy(sx, sx_d, sizeof(double)*n, cudaMemcpyDeviceToHost);
     cudaMemcpy(sy, sy_d, sizeof(double)*n, cudaMemcpyDeviceToHost);
     cudaMemcpy(sz, sz_d, sizeof(double)*n, cudaMemcpyDeviceToHost);
-	cudaDeviceSynchronize();
+	// cudaDeviceSynchronize();
 }
 
 void free_memory_cuda(){

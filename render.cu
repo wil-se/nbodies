@@ -20,7 +20,7 @@ float angle=0.0f;
 // actual vector representing the camera's direction
 float lxcam=-60.0f,lzcam=-60.0f, lycam=-30.0f;
 // XZ position of the camera
-float xcam=250.0f,zcam=250.0f,ycam=250.0f;
+float xcam=100000.0f,zcam=100000.0f,ycam=100000.0f;
 float deltaAngle = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
@@ -58,9 +58,9 @@ void draw_axis(){
 
 void draw_body(int i){
   glPushMatrix();
-  glColor3f(100.0, 100.0, 100.0);  
+  glColor3f(0, 1, 1);  
   glTranslatef (x[i], y[i], z[i]);
-  glutWireSphere(100, 16.0, 16.0);
+  glutWireSphere(150, 16.0, 16.0);
   glPopMatrix();
 }
 
@@ -136,7 +136,7 @@ void display_tree(bnode* node){
 }
 
 void display_seq_ex() {
-  print_csv_bodies();
+  // print_csv_bodies();
   compute_ex_forces();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   draw_axis();
@@ -148,7 +148,7 @@ void display_seq_ex() {
 }
 
 void display_seq_bh() {
-  print_csv_bodies();
+  // print_csv_bodies();
   bnode* root;
 	root = (bnode*)malloc(sizeof(bnode));
 	build_barnes_tree(root);
@@ -171,9 +171,9 @@ void display_cuda_ex() {
 
   set_new_memory_cuda<<<1, 1>>>();
 	set_new_vectors_cuda<<<block_amount, block_dim>>>();
-  cudaDeviceSynchronize();
+  // cudaDeviceSynchronize();
   compute_ex_forces_cuda<<<block_amount, block_dim>>>();
-  cudaDeviceSynchronize();
+  // cudaDeviceSynchronize();
   set_vectors_cuda<<<block_amount, block_dim>>>();
   free_new_memory_cuda<<<1, 1>>>();
   swap_memory();
@@ -190,14 +190,14 @@ void timer(int v) {
   glLoadIdentity();
   gluLookAt(xcam,ycam, zcam, xcam+lxcam,ycam+lycam,zcam+lzcam, 0.0f,1.0f,0.0f);
   glutPostRedisplay();
-  glutTimerFunc(1, timer, v);
+  glutTimerFunc(5, timer, v);
 }
 
 void reshape(GLint w, GLint h) {
   glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(90.0, (GLfloat)w/(GLfloat)h, 1.0, 10000000000000000000000000000.0);
+  gluPerspective(90.0, (GLfloat)w/(GLfloat)h, 1.0, 10000000.0);
   glMatrixMode(GL_MODELVIEW);
 }
 
@@ -288,7 +288,7 @@ void render_cuda_exhaustive(int argc, char** argv) {
 	glutSpecialFunc(processSpecialKeys);
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
-  glutTimerFunc(1, timer, 0);
+  glutTimerFunc(5, timer, 0);
   glEnable(GL_DEPTH_TEST);
   glutMainLoop();
 }

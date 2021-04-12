@@ -7,7 +7,7 @@
 
 // forza applicata al corpo 2 esercitata dal corpo 1
 void compute_ex_force(int body2, int body1){
-	printf("x: %f y: %f z: %f\n", x[body1], y[body1], z[body1]);
+	// printf("x: %f y: %f z: %f\n", x[body1], y[body1], z[body1]);
 	double acc[3] = {0, 0, 0};
 	double force[3] = {0, 0, 0};
 	double distance[3] = {x[body2] - x[body1], y[body2] - y[body1], z[body2] - z[body1]};
@@ -73,7 +73,7 @@ void compute_ex_forces(){
 	for(int j=0; j<n; j++){
 		for(int k=0; k<n; k++){
 			if(j != k){
-				printf("x: %f y: %f z: %f\n", x[j], y[j], z[j]);
+				// printf("x: %f y: %f z: %f\n", x[j], y[j], z[j]);
 				compute_ex_force(j, k);
 			}
 		}

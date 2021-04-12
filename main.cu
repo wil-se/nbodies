@@ -10,11 +10,11 @@ int main(int argc, char** argv) {
   set_memory();
   set_memory_cuda();
   
-  cudaDeviceSynchronize();
+  // cudaDeviceSynchronize();
   // render_sequential_barneshut(argc, argv);
   // render_sequential_exhaustive(argc, argv);
   render_cuda_exhaustive(argc, argv);
-  // cudaDeviceSynchronize();
+  cudaDeviceSynchronize();
   
   free_memory();
   return 0;
