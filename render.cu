@@ -165,15 +165,12 @@ void display_seq_bh() {
 }
 
 void display_cuda_ex() {
-  int block_amount = n/1024;
-  block_amount++;
+  int block_amount = (n/1024)+1;
   int block_dim = n/block_amount;
 
   set_new_memory_cuda<<<1, 1>>>();
 	set_new_vectors_cuda<<<block_amount, block_dim>>>();
-  // cudaDeviceSynchronize();
   compute_ex_forces_cuda<<<block_amount, block_dim>>>();
-  // cudaDeviceSynchronize();
   set_vectors_cuda<<<block_amount, block_dim>>>();
   free_new_memory_cuda<<<1, 1>>>();
   swap_memory();
@@ -190,7 +187,7 @@ void timer(int v) {
   glLoadIdentity();
   gluLookAt(xcam,ycam, zcam, xcam+lxcam,ycam+lycam,zcam+lzcam, 0.0f,1.0f,0.0f);
   glutPostRedisplay();
-  glutTimerFunc(5, timer, v);
+  glutTimerFunc(1, timer, v);
 }
 
 void reshape(GLint w, GLint h) {
@@ -288,7 +285,7 @@ void render_cuda_exhaustive(int argc, char** argv) {
 	glutSpecialFunc(processSpecialKeys);
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
-  glutTimerFunc(5, timer, 0);
+  glutTimerFunc(1, timer, 0);
   glEnable(GL_DEPTH_TEST);
   glutMainLoop();
 }
