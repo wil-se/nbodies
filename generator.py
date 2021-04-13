@@ -5,7 +5,6 @@ bodies_number = input()
 
 print(bodies_number)
 for i in range(int(bodies_number)):
-    #print(random.randint(0, 10))
     print("{} {} {} {} 0 0 0".format(
         random.randint(200, 3000) * pow(-1, random.randint(0, 1)),                 # x
         random.randint(200, 3000) * pow(-1, random.randint(0, 1)),                 # y
