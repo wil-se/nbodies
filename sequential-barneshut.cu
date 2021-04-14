@@ -113,9 +113,7 @@ void build_barnes_tree(bnode* root){
     root->z = 0;
     root->mass = 0;
     omp_init_lock(&root->lock);
-    int threads = omp_num_th > 1 ? omp_num_th : 1; 
     generate_empty_children(root);
-#pragma omp parallel for num_threads(omp_num_th)
     for(int i=0; i<n; i++){
         insert_body(root, i);
     }
@@ -318,11 +316,7 @@ void update(bnode* node, int body, double x, double y, double z, double mass){
 
 void insert_body(bnode* node, int body) {
     double bx = x[body], by = y[body], bz = z[body], bmass=mass[body];
-    omp_set_lock(&node->lock);
-    printf("PReso lock %d\n", body);
-    printf("%d node->body is %d\n", body, node->body);
     while (node->body != -1) {
-        printf("NOT -1? %d\n", node->body);
         if (node->body == -2) {
             update(node, body, bx, by, bz, bmass);
             bnode* next = get_octant(node, bx, by, bz);
@@ -331,10 +325,8 @@ void insert_body(bnode* node, int body) {
             int old_body = node->body;
             double ox = x[old_body], oy = y[old_body], oz = z[old_body], omass=mass[old_body];
             bnode *next, *old_next;
-            assert(body != old_body);
             update(node, body, bx, by, bz, bmass);
             do {
-                printf("%d OLD IS %d\n", body, old_body);
                 generate_empty_children(node);
 
                 next = get_octant(node, bx, by, bz);
@@ -348,15 +340,11 @@ void insert_body(bnode* node, int body) {
 
             } while(node == old_next);
             old_next->body = old_body;
-            assert(node->body != old_next->body);
-            assert(node->body == -1);
         }
     }
 
     update(node, body, bx, by, bz, bmass);
     node->body = body;
-    printf("Rilascio lock %d\n", body);
-    omp_unset_lock(&node->lock);
 }
 
 void compute_barnes_forces(bnode* node, int body, double theta){
@@ -437,6 +425,7 @@ void compute_barnes_forces(bnode* node, int body, double theta){
 void compute_barnes_forces_all(bnode* root, double theta){
     set_new_memory();
     set_new_vectors();
+#pragma omp parallel for num_threads(omp_num_th)
     for(int i=0; i<n; i++){
         compute_barnes_forces(root, i, theta);
     }

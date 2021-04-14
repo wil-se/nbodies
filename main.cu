@@ -8,23 +8,29 @@
 #include "cuda-barneshut.h"
 #include "openmp.h"
 
+int omp_num_th = 1;
+
 int main(int argc, char** argv) {
-  set_memory();
-  // set_memory_cuda();
-  
-  // cudaDeviceSynchronize();
-  // render_sequential_barneshut(argc, argv);
-  // render_sequential_exhaustive(argc, argv);
-  // render_cuda_exhaustive(argc, argv);
-  // render_cuda_barneshut(argc, argv);
-  // compute_barneshut_forces_cuda<<<1,1>>>();
-  // cudaDeviceSynchronize();
-  
+        if (argc > 1) {
+                int t = atoi(argv[1]);
+                if (t > 0) omp_num_th = t;
+        } 
+        set_memory();
+        // set_memory_cuda();
 
-  // OPENMP
-  // exhaustive_openmp();
-  barneshut_openmp();
+        // cudaDeviceSynchronize();
+        // render_sequential_barneshut(argc, argv);
+        // render_sequential_exhaustive(argc, argv);
+        // render_cuda_exhaustive(argc, argv);
+        // render_cuda_barneshut(argc, argv);
+        // compute_barneshut_forces_cuda<<<1,1>>>();
+        // cudaDeviceSynchronize();
 
-  free_memory();
-  return 0;
+
+        // OPENMP
+        //exhaustive_openmp();
+        barneshut_openmp();
+
+        free_memory();
+        return 0;
 }

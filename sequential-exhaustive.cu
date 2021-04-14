@@ -4,6 +4,7 @@
 #include <cassert>
 #include "common.h"
 
+extern int omp_num_th;
 
 // forza applicata al corpo 2 esercitata dal corpo 1
 void compute_ex_force(int body2, int body1){
@@ -69,6 +70,7 @@ void compute_ex_force(int body2, int body1){
 void compute_ex_forces(){
 	set_new_memory();	
 	set_new_vectors();
+#pragma omp parallel for num_threads(omp_num_th)
 	for(int j=0; j<n; j++){
 		for(int k=0; k<n; k++){
 			if(j != k){
