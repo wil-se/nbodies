@@ -1,3 +1,5 @@
+#include <omp.h>
+
 extern int n;
 extern double *x, *y, *z, *mass, *sx, *sy, *sz;
 
@@ -6,6 +8,7 @@ typedef struct bnode{
         int depth;
         int max_x, max_y, max_z, min_x, min_y, min_z;
         double x, y, z;
+        omp_lock_t lock;
         double mass; 
         struct bnode *o0, *o1, *o2, *o3, *o4, *o5, *o6, *o7;
 } bnode;

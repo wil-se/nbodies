@@ -4,6 +4,7 @@
 #include "sequential-barneshut.h"
 #include <math.h>
 #include <omp.h>
+#include <assert.h>
 
 // Numero di thread per openmp
 extern int omp_num_th;
@@ -111,6 +112,7 @@ void build_barnes_tree(bnode* root){
     root->y = 0;
     root->z = 0;
     root->mass = 0;
+    omp_init_lock(&root->lock);
     int threads = omp_num_th > 1 ? omp_num_th : 1; 
     generate_empty_children(root);
 #pragma omp parallel for num_threads(omp_num_th)
@@ -131,10 +133,10 @@ void destroy_barnes_tree(bnode* root){
         destroy_barnes_tree(root->o5);
         destroy_barnes_tree(root->o6);
         destroy_barnes_tree(root->o7);
+        omp_destroy_lock(&root->lock);
         free(root);
     }
 }
-
 
 void generate_empty_children(bnode *node){
     int depth = node->depth+1;
@@ -162,7 +164,7 @@ void generate_empty_children(bnode *node){
     o0->y = 0;
     o0->z = 0;
     o0->mass = 0;
-    omp_init_lock(&(o0->lock));
+    omp_init_lock(&o0->lock);
 
     o1->depth = depth;
     o1->body = -1;
@@ -176,7 +178,7 @@ void generate_empty_children(bnode *node){
     o1->y = 0;
     o1->z = 0;
     o1->mass = 0;
-    omp_init_lock(&(o1->lock));
+    omp_init_lock(&o1->lock);
 
     o2->depth = depth;
     o2->body = -1;
@@ -190,7 +192,7 @@ void generate_empty_children(bnode *node){
     o2->y = 0;
     o2->z = 0;
     o2->mass = 0;
-    omp_init_lock(&(o2->lock));
+    omp_init_lock(&o2->lock);
 
     o3->depth = depth;
     o3->body = -1;
@@ -204,7 +206,7 @@ void generate_empty_children(bnode *node){
     o3->y = 0;
     o3->z = 0;
     o3->mass = 0;
-    omp_init_lock(&(o3->lock));
+    omp_init_lock(&o3->lock);
 
     o4->depth = depth;
     o4->body = -1;
@@ -218,7 +220,7 @@ void generate_empty_children(bnode *node){
     o4->y = 0;
     o4->z = 0;
     o4->mass = 0;
-    omp_init_lock(&(o4->lock));
+    omp_init_lock(&o4->lock);
 
     o5->depth = depth;
     o5->body = -1;
@@ -232,7 +234,7 @@ void generate_empty_children(bnode *node){
     o5->y = 0;
     o5->z = 0;
     o5->mass = 0;
-    omp_init_lock(&(o5->lock));
+    omp_init_lock(&o5->lock);
 
     o6->depth = depth;
     o6->body = -1;
@@ -246,7 +248,7 @@ void generate_empty_children(bnode *node){
     o6->y = 0;
     o6->z = 0;
     o6->mass = 0;
-    omp_init_lock(&(o6->lock));
+    omp_init_lock(&o6->lock);
 
     o7->depth = depth;
     o7->body = -1;
@@ -260,7 +262,7 @@ void generate_empty_children(bnode *node){
     o7->y = 0;
     o7->z = 0;
     o7->mass = 0;
-    omp_init_lock(&(o7->lock));
+    omp_init_lock(&o7->lock);
 
     node->o0 = o0;
     node->o1 = o1;
@@ -304,12 +306,6 @@ bnode* get_octant(bnode* node, double x, double y, double z){
 }
 
 void update(bnode* node, int body, double x, double y, double z, double mass){
-    if(node->body >= 0){
-        node->body = -2;
-    }
-    if(node->body == -1){
-        node->body = body;
-    }
     double tmass = node->mass + mass;
     double tx = ((node->mass*node->x)+(mass*x))/tmass;
     double ty = ((node->mass*node->y)+(mass*y))/tmass;
@@ -322,28 +318,45 @@ void update(bnode* node, int body, double x, double y, double z, double mass){
 
 void insert_body(bnode* node, int body) {
     double bx = x[body], by = y[body], bz = z[body], bmass=mass[body];
-    omp_set_lock(&(node->lock));
+    omp_set_lock(&node->lock);
+    printf("PReso lock %d\n", body);
+    printf("%d node->body is %d\n", body, node->body);
     while (node->body != -1) {
+        printf("NOT -1? %d\n", node->body);
         if (node->body == -2) {
             update(node, body, bx, by, bz, bmass);
             bnode* next = get_octant(node, bx, by, bz);
-            insert_body(next, body);
+            node = next;
         } else if (node->body >= 0) {
-            printf("%d node->body is %d\n", body, node->body);
             int old_body = node->body;
+            double ox = x[old_body], oy = y[old_body], oz = z[old_body], omass=mass[old_body];
             bnode *next, *old_next;
+            assert(body != old_body);
+            update(node, body, bx, by, bz, bmass);
             do {
-            printf("HHH\n");
+                printf("%d OLD IS %d\n", body, old_body);
                 generate_empty_children(node);
+
                 next = get_octant(node, bx, by, bz);
-                old_next = get_octant(node, x[old_body], y[old_body], z[old_body]);
-                update(node, body, bx, by, bz, bmass);
-                insert_body(old_next, old_body);
-                node = next;
-            } while (node != old_next);
+                old_next = get_octant(node, ox, oy, oz);
+
+                update(next, body, bx, by, bz, bmass);
+                update(old_next, body, ox, oy, oz, omass);
+
+                node->body = -2;
+                node = next; 
+
+            } while(node == old_next);
+            old_next->body = old_body;
+            assert(node->body != old_next->body);
+            assert(node->body == -1);
         }
+    }
+
+    update(node, body, bx, by, bz, bmass);
     node->body = body;
-    omp_unset_lock(&(node->lock));
+    printf("Rilascio lock %d\n", body);
+    omp_unset_lock(&node->lock);
 }
 
 void compute_barnes_forces(bnode* node, int body, double theta){
@@ -422,7 +435,6 @@ void compute_barnes_forces(bnode* node, int body, double theta){
 }
 
 void compute_barnes_forces_all(bnode* root, double theta){
-    unsigned int threads = omp_num_th > 1 ? omp_num_th : 1; 
     set_new_memory();
     set_new_vectors();
     for(int i=0; i<n; i++){
