@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
   // set_memory_cuda();
   
   // cudaDeviceSynchronize();
-  // render_sequential_barneshut(argc, argv);
+  render_sequential_barneshut(argc, argv);
   // render_sequential_exhaustive(argc, argv);
   // render_cuda_exhaustive(argc, argv);
   // render_cuda_barneshut(argc, argv);
@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 
   // OPENMP
   // exhaustive_openmp();
-  barneshut_openmp();
+  // barneshut_openmp();
 
   free_memory();
   return 0;
